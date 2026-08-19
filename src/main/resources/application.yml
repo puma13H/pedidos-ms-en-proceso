@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: orden-ms
+  profiles:
+    active: dev
