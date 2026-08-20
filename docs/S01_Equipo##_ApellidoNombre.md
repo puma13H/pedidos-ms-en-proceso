@@ -5,7 +5,7 @@
 ## Datos del estudiante
 
 - Nombre: Frank Alexander
-- Equipo: Pinle en proceso
+- Equipo: En proceso
 - Sesión: S01 - Construcción de un servicio base para un sistema distribuido
 - Rol o aporte: Implementación individual de `orden-ms`, CRUD, persistencia y pruebas.
 - GitHub: https://github.com/puma13H/orden-ms-pinle-en-proceso
