@@ -1,5 +1,5 @@
 spring:
   application:
-    name: orden-ms
+    name: pedidos-ms
   profiles:
     active: dev

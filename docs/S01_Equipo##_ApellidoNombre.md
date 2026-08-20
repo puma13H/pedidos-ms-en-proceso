@@ -1,4 +1,4 @@
-# S01 - Evidencia individual de orden-ms
+# S01 - Evidencia individual de pedidos-ms
 
 > Reemplazar los campos entre corchetes y exportar esta página a `S01_Equipo##_ApellidoNombre.pdf` desde MkDocs o una herramienta equivalente. Cada captura debe conservar reloj del sistema y usuario/perfil visible.
 
@@ -7,14 +7,14 @@
 - Nombre: Frank Alexander
 - Equipo: En proceso
 - Sesión: S01 - Construcción de un servicio base para un sistema distribuido
-- Rol o aporte: Implementación individual de `orden-ms`, CRUD, persistencia y pruebas.
-- GitHub: https://github.com/puma13H/orden-ms-pinle-en-proceso
+- Rol o aporte: Implementación individual de `pedidos-ms`, CRUD, persistencia y pruebas.
+- GitHub: https://github.com/puma13H/pedidos-ms-en-proceso
 
 ## Evidencia técnica
 
 ### 1. Microservicio delimitado
 
-Caso demostrado: una tienda registra la orden de compra de Juan Perez por una laptop Lenovo y un mouse, por un total de S/ 2850.00. `orden-ms` gestiona el cliente de la orden, la descripcion, el total, el estado y la fecha de creacion. `pagatu-catalogo-ms` mantiene los productos y categorias; separar ambos dominios evita que `orden-ms` lea las tablas del catalogo.
+Caso demostrado: una tienda registra el pedido de Juan Perez por una laptop Lenovo y un mouse, por un total de S/ 2850.00. `pedidos-ms` gestiona el cliente del pedido, la descripcion, el total, el estado y la fecha de creacion. `pagatu-catalogo-ms` mantiene los productos y categorias; separar ambos dominios evita que `pedidos-ms` lea las tablas del catalogo.
 
 Estados usados en la evidencia: `PENDIENTE`, `CONFIRMADA`, `PREPARANDO`, `ENVIADA`, `ENTREGADA` y `CANCELADA`.
 
@@ -31,7 +31,7 @@ La migracion `V1__create_orden_tables.sql` crea `ordenes` con `cliente_nombre`, 
 Consulta sugerida:
 
 ```powershell
-docker exec -it pagatu-postgres-orden-dev psql -U pagatu -d pagatu_orden_db -c "SELECT id, cliente_nombre, descripcion, total, estado, fecha_creacion FROM ordenes;"
+docker exec -it pagatu-postgres-pedidos-dev psql -U pagatu -d pagatu_orden_db -c "SELECT id, cliente_nombre, descripcion, total, estado, fecha_creacion FROM ordenes;"
 ```
 
 ### 3. REST y Swagger

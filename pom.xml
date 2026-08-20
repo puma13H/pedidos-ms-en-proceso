@@ -11,9 +11,9 @@
     </parent>
 
     <groupId>pe.edu.upeu</groupId>
-    <artifactId>orden-ms</artifactId>
+    <artifactId>pedidos-ms</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>orden-ms</name>
+    <name>pedidos-ms</name>
     <description>Microservicio de ordenes del sistema pagatu</description>
 
     <properties>

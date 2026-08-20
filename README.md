@@ -1,4 +1,4 @@
-# orden-ms
+# pedidos-ms
 
 Microservicio autónomo de órdenes para el proyecto `pagatu`. Gestiona el ciclo de vida de las órdenes; no mantiene categorías, productos ni clientes. La referencia a un producto debe resolverse por API entre microservicios cuando esa integración exista, nunca leyendo la base de datos del catálogo.
 
@@ -32,7 +32,7 @@ Requisito: JDK 21, Docker Desktop y PowerShell.
 ```powershell
 # PostgreSQL DEV: localhost:15433 -> 5432
 Docker compose -f compose-dev.yml up -d
-Docker exec -it pagatu-postgres-orden-dev psql -U pagatu -d pagatu_orden_db -c "SELECT current_database();"
+Docker exec -it pagatu-postgres-pedidos-dev psql -U pagatu -d pagatu_orden_db -c "SELECT current_database();"
 
 # Aplicación en localhost:8080
 .\mvnw.cmd spring-boot:run
@@ -91,9 +91,9 @@ Swagger: `http://localhost:8080/swagger-ui/index.html`.
 ## PostgreSQL y Flyway
 
 ```powershell
-Docker exec -it pagatu-postgres-orden-dev psql -U pagatu -d pagatu_orden_db -c "\dt"
-Docker exec -it pagatu-postgres-orden-dev psql -U pagatu -d pagatu_orden_db -c "\d ordenes"
-Docker exec -it pagatu-postgres-orden-dev psql -U pagatu -d pagatu_orden_db -c "SELECT * FROM ordenes;"
+Docker exec -it pagatu-postgres-pedidos-dev psql -U pagatu -d pagatu_orden_db -c "\dt"
+Docker exec -it pagatu-postgres-pedidos-dev psql -U pagatu -d pagatu_orden_db -c "\d ordenes"
+Docker exec -it pagatu-postgres-pedidos-dev psql -U pagatu -d pagatu_orden_db -c "SELECT * FROM ordenes;"
 ```
 
 Flyway aplica `V1__create_orden_tables.sql` una sola vez. Hibernate usa `ddl-auto: validate`, por lo que no crea ni modifica el esquema.
@@ -101,10 +101,10 @@ Flyway aplica `V1__create_orden_tables.sql` una sola vez. Hibernate usa `ddl-aut
 ## PROD local opcional
 
 ```powershell
-Docker compose up -d --build --scale orden-ms=2
+Docker compose up -d --build --scale pedidos-ms=2
 Docker compose ps
-Docker run --rm --network pagatu-orden-int curlimages/curl:8.10.1 -s http://orden-ms:8080/actuator/health
-Docker compose logs --tail=80 orden-ms
+Docker run --rm --network pagatu-pedidos-int curlimages/curl:8.10.1 -s http://pedidos-ms:8080/actuator/health
+Docker compose logs --tail=80 pedidos-ms
 Docker compose down
 ```
 
@@ -123,7 +123,7 @@ El proyecto requiere JDK 21. Verificar con `java --version` antes de ejecutar.
 
 Cada captura debe incluir el reloj del sistema y el usuario/perfil visible, sin recortar. No se incluyen capturas ficticias en el repositorio; deben tomarse durante la ejecución real.
 
-1. **Dominio:** explicar que `orden-ms` gestiona órdenes y su estado, separado del catálogo.
+1. **Dominio:** explicar que `pedidos-ms` gestiona pedidos y su estado, separado del catálogo.
 2. **Persistencia:** mostrar `docker ps`, logs de Flyway y consultas `psql`.
 3. **REST:** mostrar `mvnw spring-boot:run`, CRUD por PowerShell y Swagger.
 4. **Escalamiento:** mostrar `/actuator/health` y `/actuator/metrics` en `8080` y `8081`.

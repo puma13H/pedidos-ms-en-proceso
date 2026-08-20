@@ -8,6 +8,6 @@ public class SaludoController {
 
     @GetMapping("/saludo")
     public String saludo() {
-        return "orden-ms activo";
+        return "pedidos-ms activo";
     }
 }

@@ -1,9 +1,9 @@
-name: pagatu-orden-prod
+name: pagatu-pedidos-prod
 
 services:
-  postgres-orden:
+  postgres-pedidos:
     image: postgres:16-alpine
-    container_name: pagatu-postgres-orden
+    container_name: pagatu-postgres-pedidos
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${DB_NAME}
@@ -16,21 +16,21 @@ services:
       retries: 10
       start_period: 20s
     volumes:
-      - pagatu_orden_data:/var/lib/postgresql/data
+      - pagatu_pedidos_data:/var/lib/postgresql/data
     ports:
       - "25433:5432"
     networks:
-      - pagatu-orden-int
+      - pagatu-pedidos-int
 
-  orden-ms:
+  pedidos-ms:
     build: .
     restart: unless-stopped
     depends_on:
-      postgres-orden:
+      postgres-pedidos:
         condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
-      DB_HOST: pagatu-postgres-orden
+      DB_HOST: pagatu-postgres-pedidos
       DB_PORT: 5432
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
@@ -38,11 +38,11 @@ services:
     volumes:
       - ./logs:/app/logs
     networks:
-      - pagatu-orden-int
+      - pagatu-pedidos-int
 
 volumes:
-  pagatu_orden_data:
+  pagatu_pedidos_data:
 
 networks:
-  pagatu-orden-int:
-    name: pagatu-orden-int
+  pagatu-pedidos-int:
+    name: pagatu-pedidos-int
