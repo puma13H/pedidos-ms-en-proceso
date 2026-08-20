@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>S01 - Evidencia individual de pedidos-ms</title>
+<style>
+@page { size: A4; margin: 18mm; }
+body { font-family: Arial, sans-serif; color: #17202a; line-height: 1.45; font-size: 11pt; }
+h1 { color: #123b5d; border-bottom: 3px solid #2d8c9d; padding-bottom: 8px; }
+h2 { color: #123b5d; margin-top: 24px; }
+h3 { color: #2d6a7b; margin-top: 18px; }
+code, pre { font-family: Consolas, monospace; }
+code { background: #edf2f4; padding: 2px 4px; }
+pre { background: #f3f6f7; border: 1px solid #d6e0e3; padding: 10px; white-space: pre-wrap; font-size: 9pt; }
+.meta { background: #edf7f8; border-left: 5px solid #2d8c9d; padding: 12px; }
+.evidence { border: 1px dashed #8899a6; padding: 12px; margin: 10px 0; color: #52616b; }
+.small { font-size: 9pt; color: #52616b; }
+.pagebreak { page-break-before: always; }
+a { color: #176b87; }
+</style>
+</head>
+<body>
+<h1>S01 - Evidencia individual de pedidos-ms</h1>
+<p class="small">Documento preparado para exportación PDF. Las capturas deben agregarse con reloj del sistema y usuario o perfil visible.</p>
+<div class="meta">
+<p><strong>Nombre:</strong> Frank Alexander</p>
+<p><strong>Equipo:</strong> En proceso</p>
+<p><strong>Sesión:</strong> S01 - Construcción de un servicio base para un sistema distribuido</p>
+<p><strong>Rol o aporte:</strong> Implementación individual de <code>pedidos-ms</code>, CRUD, persistencia y pruebas.</p>
+<p><strong>GitHub:</strong> <a href="https://github.com/puma13H/pedidos-ms-en-proceso">https://github.com/puma13H/pedidos-ms-en-proceso</a></p>
+</div>
+<h2>Evidencia técnica</h2>
+<h3>1. Microservicio delimitado</h3>
+<p>Caso demostrado: una tienda registra el pedido de Juan Perez por una laptop Lenovo y un mouse, por un total de S/ 2850.00. <code>pedidos-ms</code> gestiona el cliente del pedido, la descripción, el total, el estado y la fecha de creación. <code>pagatu-catalogo-ms</code> mantiene los productos y categorías; separar ambos dominios evita que <code>pedidos-ms</code> lea las tablas del catálogo.</p>
+<p>Estados usados: <code>PENDIENTE</code>, <code>CONFIRMADA</code>, <code>PREPARANDO</code>, <code>ENVIADA</code>, <code>ENTREGADA</code> y <code>CANCELADA</code>.</p>
+<div class="evidence"><strong>Captura 1:</strong> insertar captura del árbol del proyecto y del código de <code>Orden</code>.</div>
+<h3>2. PostgreSQL y Flyway</h3>
+<p>La migración <code>V1__create_orden_tables.sql</code> crea la tabla <code>ordenes</code> con cliente, descripción, total, estado y fecha de creación. Hibernate usa <code>ddl-auto: validate</code>; Flyway define el esquema y Hibernate solo lo comprueba.</p>
+<div class="evidence"><strong>Captura 2:</strong> insertar <code>docker ps</code> mostrando PostgreSQL en <code>15433</code>.</div>
+<div class="evidence"><strong>Captura 3:</strong> insertar log con <code>Successfully applied 1 migration</code> y consulta <code>psql</code>.</div>
+<pre>docker exec -it pagatu-postgres-pedidos-dev psql -U pagatu -d pagatu_orden_db -c "SELECT id, cliente_nombre, descripcion, total, estado, fecha_creacion FROM ordenes;"</pre>
+<h3>3. REST y Swagger</h3>
+<p>El CRUD se prueba con <code>/api/v1/ordenes</code>.</p>
+<pre>$body = '{"clienteNombre":"Juan Perez","descripcion":"Laptop Lenovo + Mouse","total":2850.00,"estado":"PENDIENTE"}'
+$orden = Invoke-RestMethod -Method Post -Uri http://localhost:8080/api/v1/ordenes -ContentType "application/json" -Body $body
+$orden
+Invoke-RestMethod http://localhost:8080/api/v1/ordenes
+Invoke-RestMethod http://localhost:8080/api/v1/ordenes/$($orden.id)
+$update = '{"clienteNombre":"Juan Perez","descripcion":"Laptop Lenovo + Mouse","total":2850.00,"estado":"CONFIRMADA"}'
+Invoke-RestMethod -Method Put -Uri http://localhost:8080/api/v1/ordenes/$($orden.id) -ContentType "application/json" -Body $update
+Invoke-RestMethod -Method Delete -Uri http://localhost:8080/api/v1/ordenes/$($orden.id)</pre>
+<p>La evidencia debe mostrar la respuesta <code>201 Created</code>, el cambio a <code>CONFIRMADA</code> y el registro actualizado en PostgreSQL antes del DELETE.</p>
+<div class="evidence"><strong>Captura 4:</strong> insertar CRUD por PowerShell.</div>
+<div class="evidence"><strong>Captura 5:</strong> insertar Swagger en <code>http://localhost:8080/swagger-ui/index.html</code>.</div>
+<h3>4. Health, métricas y escalamiento</h3>
+<pre>.mvnw.cmd spring-boot:run
+.mvnw.cmd spring-boot:run "-Dspring-boot.run.arguments=--server.port=8081"
+
+Invoke-RestMethod http://localhost:8080/actuator/health
+Invoke-RestMethod http://localhost:8081/actuator/health
+Invoke-RestMethod http://localhost:8080/actuator/metrics
+Invoke-RestMethod http://localhost:8081/actuator/metrics</pre>
+<p>Las dos instancias son copias stateless y comparten PostgreSQL. Resultados verificados: health <code>UP</code> en 8080 y 8081; métricas HTTP 200 en ambos; Swagger HTTP 200 en ambos.</p>
+<div class="evidence"><strong>Captura 6:</strong> insertar las terminales o la evidencia solicitada por el docente.</div>
+<h3>5. Documentación reproducible</h3>
+<p>La ejecución está documentada en <a href="https://github.com/puma13H/pedidos-ms-en-proceso">README.md del repositorio</a>, con comandos DEV, PostgreSQL, CRUD, Docker y diagnóstico del hallazgo técnico.</p>
+<h2>Error o hallazgo</h2>
+<p>Durante la primera prueba PROD, las instancias conectaban a PostgreSQL pero fallaban con <code>Schema validation: missing table [ordenes]</code>. El diagnóstico mostró que no aparecía ningún evento de Flyway y <code>psql</code> devolvía <code>Did not find any relations</code>. Se agregó <code>spring-boot-starter-flyway</code>, se recreó el volumen y Flyway aplicó V1 correctamente antes de que Hibernate validara el esquema.</p>
+<h2>Reflexión técnica</h2>
+<p>Un microservicio reproducible reduce las diferencias entre equipos y ambientes. DEV permite cambios rápidos con Maven Wrapper y PostgreSQL aislado. PROD local se acerca al empaquetado real mediante Docker. Ser stateless permite ejecutar copias sin perder información local. Cada instancia puede usar un puerto distinto. En un entorno real, un Gateway o balanceador repartiría las solicitudes. Flyway controla la evolución de la base propia del servicio.</p>
+<div class="pagebreak"></div>
+<h2>Anexo: Feedback de la sesión</h2>
+<p><strong>Aprendizaje más importante:</strong> [completar]</p>
+<p><strong>Punto más confuso:</strong> [completar]</p>
+<p><strong>Pregunta para la siguiente clase:</strong> [completar]</p>
+<p><strong>Nivel:</strong> [Entendido / Más o menos / Necesito ayuda]</p>
+<p><strong>Cómo mejorar mi comprensión:</strong> [completar]</p>
+<p><strong>Compromiso:</strong> [Muy Comprometido/a / Comprometido/a / Poco Comprometido/a]</p>
+<p><strong>Satisfacción (1-10):</strong> [completar]</p>
+</body>
+</html>
