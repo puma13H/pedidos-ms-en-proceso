@@ -60,8 +60,8 @@ Invoke-RestMethod http://localhost:8080/actuator/health
 Invoke-RestMethod http://localhost:8081/actuator/health
 Invoke-RestMethod http://localhost:8080/actuator/metrics
 Invoke-RestMethod http://localhost:8081/actuator/metrics</pre>
-<p>Las dos instancias son copias stateless y comparten PostgreSQL. Resultados verificados: health <code>UP</code> en 8080 y 8081; métricas HTTP 200 en ambos; Swagger HTTP 200 en ambos.</p>
-<div class="evidence"><strong>Captura 6:</strong> insertar las terminales o la evidencia solicitada por el docente.</div>
+<p>La instancia única es stateless porque el estado del pedido se guarda en PostgreSQL y no en la memoria de la aplicación. Resultado verificado: health <code>UP</code>, métricas HTTP 200 y Swagger HTTP 200 en 8080.</p>
+<div class="evidence"><strong>Captura 6:</strong> insertar Docker Desktop mostrando una instancia <code>pedidos-ms</code> en 8080 y PostgreSQL, junto con health <code>UP</code>.</div>
 <h3>5. Documentación reproducible</h3>
 <p>La ejecución está documentada en <a href="https://github.com/puma13H/pedidos-ms-en-proceso">README.md del repositorio</a>, con comandos DEV, PostgreSQL, CRUD, Docker y diagnóstico del hallazgo técnico.</p>
 <h2>Error o hallazgo</h2>

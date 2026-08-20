@@ -58,42 +58,25 @@ La evidencia debe mostrar la respuesta `201 Created` del POST, el cambio de esta
 
 **Captura 5:** [insertar Swagger en `http://localhost:8080/swagger-ui/index.html` con `OrdenController`]
 
-### 4. Health, métricas y escalamiento
+### 4. Health, métricas y ejecución
 
-Terminal 1:
-
-```powershell
-.\mvnw.cmd spring-boot:run
-```
-
-Terminal 2:
-
-```powershell
-.\mvnw.cmd spring-boot:run "-Dspring-boot.run.arguments=--server.port=8081"
-```
-
-Luego probar ambas copias:
+La instancia única se ejecuta en `8080` y PostgreSQL en `15433`:
 
 ```powershell
 Invoke-RestMethod http://localhost:8080/actuator/health
-Invoke-RestMethod http://localhost:8081/actuator/health
 Invoke-RestMethod http://localhost:8080/actuator/metrics
-Invoke-RestMethod http://localhost:8081/actuator/metrics
 ```
 
-Resultado esperado en health: estado `UP` en ambos puertos. Las dos instancias son copias stateless y comparten la misma PostgreSQL; el estado de la orden no se guarda en la memoria de una instancia.
+Resultado esperado: health con estado `UP` y metrics con respuesta HTTP 200. La instancia es stateless porque el estado del pedido se guarda en PostgreSQL, no en la memoria de la aplicación.
 
-**Captura 6:** [insertar las dos terminales visibles, con `8080` y `8081`]
+**Captura 6:** [insertar Docker Desktop mostrando una instancia `pedidos-ms` en `8080` y PostgreSQL, junto con la terminal o navegador mostrando health `UP`]
 
 Resultados verificados durante la ejecucion:
 
 ```text
 GET /actuator/health en 8080: UP
-GET /actuator/health en 8081: UP
 GET /actuator/metrics en 8080: HTTP 200
-GET /actuator/metrics en 8081: HTTP 200
 GET /swagger-ui/index.html en 8080: HTTP 200
-GET /swagger-ui/index.html en 8081: HTTP 200
 ```
 
 La orden `id=1`, `clienteNombre=Juan Perez`, `total=2850.00` y `estado=CONFIRMADA` se consulto correctamente desde ambas instancias y desde PostgreSQL.
