@@ -8,7 +8,7 @@
 - Equipo: Pinle en proceso
 - Sesión: S01 - Construcción de un servicio base para un sistema distribuido
 - Rol o aporte: Implementación individual de `orden-ms`, CRUD, persistencia y pruebas.
-- GitHub: [URL del repositorio]
+- GitHub: https://github.com/puma13H/orden-ms-pinle-en-proceso
 
 ## Evidencia técnica
 
